@@ -2,9 +2,16 @@
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
-        Console.WriteLine("1234");
+        while (true)
+        {
+             ReadAndWriteFiles.ReadAllFiles("test.txt");
+             //Console.Write("Lägg till i listan: \t");
+             //string text = Console.ReadLine();
+             //await ReadAndWriteFiles.WriteAllFiles("list.txt", text);
+        }
+        
+        
     }
 }
