@@ -4,13 +4,41 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        while (true)
+        // while (true)
+        // {
+        //      ReadAndWriteFiles.ReadAllFiles("test.txt");
+        //      //Console.Write("Lägg till i listan: \t");
+        //      //string text = Console.ReadLine();
+        //      //await ReadAndWriteFiles.WriteAllFiles("list.txt", text);
+        //
+        //      
+        //      
+        //      
+        // }
+        bool isRunning = true;
+        while (isRunning)
         {
-             ReadAndWriteFiles.ReadAllFiles("test.txt");
-             //Console.Write("Lägg till i listan: \t");
-             //string text = Console.ReadLine();
-             //await ReadAndWriteFiles.WriteAllFiles("list.txt", text);
+            UI.DrawUI();
+            string input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    Console.WriteLine("Du är inomhus");
+                    Console.ReadKey();
+                    break;
+                case "2":
+                    Console.WriteLine("Du är utomhus");
+                    Console.ReadKey();
+                    break;
+                case "3":
+                    isRunning = !isRunning;
+                    break;
+                    
+            }
         }
+        
+        
         
         
     }
