@@ -45,8 +45,8 @@ public class LoadWeatherData
                             weatherList.Add(new WeatherDataProperties
                             {
                                 DateAndTime =
-                                    DateTime.Parse(date + " " + match.Groups["time"].Value),
-                                Temperature = double.Parse(match.Groups["temperature"].Value).CompareTo(CultureInfo.InvariantCulture),
+                                    DateTime.Parse(match.Groups["date"].Value + " " + match.Groups["time"].Value),
+                                Temperature = double.Parse(match.Groups["temperature"].Value),
                                 Condition = match.Groups["condition"].Value,
                                 Humidity = int.Parse(match.Groups["moldlevel"].Value)
 
