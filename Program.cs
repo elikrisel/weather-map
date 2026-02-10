@@ -1,4 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using System.Linq;
+using System.Globalization;
 
 namespace weather_map;
 
@@ -20,36 +22,45 @@ class Program
         // }
         #endregion
 
+        Console.WriteLine("Läser in data:");
+        List<WeatherDataProperties> weatherDataList = LoadWeatherData.WeatherData("test.txt");
+
+        if (weatherDataList.Count > 0)
+        {
+            Console.WriteLine($"{weatherDataList.Count}:");
+        }
         
-         bool isRunning = true;
-         while (isRunning)
-         {
-               UI.DrawUI();
-               string input = Console.ReadLine();
-              
-               switch (input)
-               {
-                   case "1":
-                       Console.WriteLine("Du är inomhus");
-                       Console.ReadKey();
-                       break;
-                   case "2":
-                       Console.WriteLine("Du är utomhus");
-                       Console.ReadKey();
-                       break;
-                   case "3":
-                       isRunning = !isRunning;
-                       break;
-                       
-               }
-                
-              
-         }
-         
-         
-         
-    
-    
+
+
+        // bool isRunning = true;
+        // while (isRunning)
+        // {
+        //       UI.DrawUI();
+        //       string input = Console.ReadLine();
+        //      
+        //       switch (input)
+        //       {
+        //           case "1":
+        //               Console.WriteLine("Du är inomhus");
+        //               Console.ReadKey();
+        //               break;
+        //           case "2":
+        //               Console.WriteLine("Du är utomhus");
+        //               Console.ReadKey();
+        //               break;
+        //           case "3":
+        //               isRunning = !isRunning;
+        //               break;
+        //               
+        //       }
+        //        
+        //      
+        // }
+
+
+
+
+
     }
     
 }
