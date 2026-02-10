@@ -6,6 +6,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        #region Commented Section for testing
         // while (true)
         // {
         //      ReadAndWriteFiles.ReadAllFiles("test.txt");
@@ -17,7 +18,7 @@ class Program
         //      
         //      
         // }
-
+        #endregion
 
         
          bool isRunning = true;

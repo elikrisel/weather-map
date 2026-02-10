@@ -1,4 +1,6 @@
-﻿namespace weather_map;
+﻿
+namespace weather_map;
+
 
 public class UI
 {

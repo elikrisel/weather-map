@@ -1,5 +1,6 @@
 namespace weather_map;
 
+//TODO: REMOVE CLASS, THIS IS FOR TESTING PURPOSES
 public class ReadAndWriteFiles
 {
     private static string filePath = "../../../Files/";
