@@ -4,65 +4,50 @@ using System.Text.RegularExpressions;
 
 namespace weather_map;
 
-//TODO: LÖSA FELMEDDELANDET FÖR ATT FÅ EXAKT TID OCH DATUM
 public class LoadWeatherData
 {
     private static string filePath = "../../../Files/";
-    
-    
-    public static List<WeatherDataProperties>WeatherData(string fileName)
+    //Flyttade ut denna ur List metoden
+    private static string pattern =
+        @"^(?<date>\d{4}-\d{2}-\d{2}) (?<time>\d{2}:\d{2}:\d{2}),(?<condition>[A-ZÅÄÖa-zåäö]+),(?<temperature>[\d.-]+),(?<humidity>\d+)$";
+
+    public static List<WeatherDataProperties> WeatherData(string fileName)
     {
         var weatherList = new List<WeatherDataProperties>();
         string fullPath = Path.Combine(filePath, fileName);
-        
-        string pattern =
-            @"^(?<date>\d{4}-\d{2}-\d{2}) (?<time>\d{2}:\d{2}:\d{2}),(?<condition>[A-ZÅÄÖa-zåäö]+),(?<temperature>[\d.+]+),(?<moldlevel>\d{2})$"; 
-        
         Regex regex = new Regex(pattern);
-        
-            using (StreamReader file = new StreamReader(fullPath))
+
+        using (StreamReader file = new StreamReader(fullPath))
+        {
+            string line = file.ReadLine();
+            while (line != null)
             {
-                string line;
-                while ((line = file.ReadLine()) != null)
-                {
-                    Match match = regex.Match(line);
-                    if (match.Success)
-                    {
-                        try
-                        {
-                            DateTime date = DateTime.Parse(match.Groups["date"].Value);
-                            
-                            
-                            
-                            
-                            //Filtrera bort Maj 2016 och Januari 2017
-                            if ((date.Year == 2016 && date.Month == 5) || 
-                                (date.Year == 2017 && date.Month == 1))
-                            {
-                                continue;
-                            }
-
-                            weatherList.Add(new WeatherDataProperties
-                            {
-                                DateAndTime =
-                                    DateTime.Parse(match.Groups["date"].Value + " " + match.Groups["time"].Value),
-                                Temperature = double.Parse(match.Groups["temperature"].Value),
-                                Condition = match.Groups["condition"].Value,
-                                Humidity = int.Parse(match.Groups["moldlevel"].Value)
-
-                            });
-
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message + "file does not exist");
-                        }
-                    }
-                        
+                Match match = regex.Match(line);
+                line = file.ReadLine();
+                if (match.Success)
+                {   
+                    //Kombinerar datum och tid till en sträng 
+                    string dateTimeString = $"{match.Groups["date"].Value} {match.Groups["time"].Value}";
                     
+                    //TryParse för att hantera korrekt datum och tid för att undvika fel dagar och tid
+                    if (DateTime.TryParse(dateTimeString, out DateTime parsedDateTime))
+                    {
+                        if ((parsedDateTime.Year == 2016 && parsedDateTime.Month == 5) ||
+                            (parsedDateTime.Year == 2017 && parsedDateTime.Month == 1))
+                            continue;
+                        
+                        //InvariantCulture för att hantera [, / .] vid temperaturer
+                        weatherList.Add(new WeatherDataProperties
+                        {
+                            DateAndTime = parsedDateTime,
+                            Temperature = double.Parse(match.Groups["temperature"].Value, CultureInfo.InvariantCulture),
+                            Condition = match.Groups["condition"].Value,
+                            Humidity = int.Parse(match.Groups["humidity"].Value)
+                        });
+                    }
                 }
             }
-         
+        }
         
         return weatherList;
     }
