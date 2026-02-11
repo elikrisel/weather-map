@@ -34,10 +34,10 @@ class Program
             switch (input)
             {
                 case "1":
-                    HandleSubMenu("Inomhus");
+                    HandleSubMenu("Inne");
                     break;
                 case "2":
-                    HandleSubMenu("Utomhus");
+                    HandleSubMenu("Ute");
                     break;
                 case "3":
                     isRunning = !isRunning;
@@ -46,29 +46,14 @@ class Program
             }
         }
     }
-
+    
+    //TODO: INCLUDE WEATHERPROPERTIES LIST TO ACCESS TO LINQ?
     private static void HandleSubMenu(string location)
     {
-        Console.Clear();
-        Console.WriteLine($"===Meny för {location}===");
-        Console.WriteLine("1) Leta efter medeltemperatur för valt datum ");
-        Console.WriteLine("2) Sortering av varmast till kallaste dagen enligt medeltemperatur per dag");
-        Console.WriteLine("3) Sortering av torrast till fuktigaste dagen enligt medelluftfuktighet per dag");
-        Console.WriteLine("4) Sortering av minst till störst risk av mögel");
-        
-        //Lägger på ytterligare alternativ när användaren väljer utomhus
-        if (location == "Utomhus")
-        {
-            Console.WriteLine("5) Datum för meteorologisk Höst");
-            Console.WriteLine("6) Datum för meteologisk Vinter");    
-        }
-        
-        Console.WriteLine("\n0) Tillbaka");
-        Console.WriteLine("\n Välj ett alternativ: ");
-
         bool isRunningSubMenu = true;
         while (isRunningSubMenu)
         {
+            UI.DrawSubMenu(location);
             string input = Console.ReadLine();
             switch (input)
             {
@@ -84,19 +69,16 @@ class Program
                 case "4":
                     Console.WriteLine($"Kör 4 i {location}");
                     break;
-                case "5" when location == "Utomhus":
+                case "5" when location == "Ute":
                     Console.WriteLine($"Kör 5 i {location}");
                     break;
-                case "6" when location == "Utomhus":
+                case "6" when location == "Ute":
                     Console.WriteLine($"Kör 6 i {location}");
                     break;
                 case "0":
                     isRunningSubMenu = !isRunningSubMenu;
                     break;
-                default:
-                    Console.WriteLine(
-                        "Ogiltigt val i menyn. Välj mellan alternativen för att navigera och 0 för att gå tillbaka!");
-                    break;
+                    
             }
         }
     }
