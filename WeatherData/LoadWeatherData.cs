@@ -9,7 +9,7 @@ public class LoadWeatherData
     private static string filePath = "../../../Files/";
     //Flyttade ut denna ur List metoden
     private static string pattern =
-        @"^(?<date>\d{4}-\d{2}-\d{2}) (?<time>\d{2}:\d{2}:\d{2}),(?<condition>[A-ZÅÄÖa-zåäö]+),(?<temperature>[\d.-]+),(?<humidity>\d+)$";
+        @"^(?<date>\d{4}-\d{2}-\d{2}) (?<time>\d{2}:\d{2}:\d{2}),(?<location>[A-ZÅÄÖa-zåäö]+),(?<temperature>[\d.-]+),(?<humidity>\d+)$";
 
     public static List<WeatherDataProperties> WeatherData(string fileName)
     {
@@ -41,7 +41,7 @@ public class LoadWeatherData
                         {
                             DateAndTime = parsedDateTime,
                             Temperature = double.Parse(match.Groups["temperature"].Value, CultureInfo.InvariantCulture),
-                            Condition = match.Groups["condition"].Value,
+                            Location = match.Groups["location"].Value,
                             Humidity = int.Parse(match.Groups["humidity"].Value)
                         });
                     }
