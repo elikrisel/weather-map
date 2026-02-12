@@ -16,7 +16,7 @@ public class UI
 
         Console.WriteLine("1) Inne");
         Console.WriteLine("2) Ute");
-        Console.WriteLine("3) Avsluta");    
+        Console.WriteLine("3) Avsluta");
         
         Console.Write("\nvälj ett alternativ: ");
     }

@@ -43,6 +43,9 @@ class Program
                 case "3":
                     isRunning = !isRunning;
                     break;
+                    //case "4":
+                    //Raport.GenerateReport(weatherDataList);
+                    //break;
                 
             }
         }
