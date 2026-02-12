@@ -34,10 +34,10 @@ class Program
             switch (input)
             {
                 case "1":
-                    HandleSubMenu("Inne");
+                    HandleSubMenu("Inne",weatherDataList);
                     break;
                 case "2":
-                    HandleSubMenu("Ute");
+                    HandleSubMenu("Ute", weatherDataList);
                     break;
                 case "3":
                     isRunning = !isRunning;
@@ -48,8 +48,11 @@ class Program
     }
     
     //TODO: INCLUDE WEATHERPROPERTIES LIST TO ACCESS TO LINQ?
-    private static void HandleSubMenu(string location)
+    private static void HandleSubMenu(string location, List<WeatherDataProperties> weatherList)
     {
+        var data = 
+            weatherList.Where(x => x.Location == location).ToList();
+        
         bool isRunningSubMenu = true;
         while (isRunningSubMenu)
         {
@@ -59,6 +62,7 @@ class Program
             {
                 case "1":
                     Console.WriteLine($"Kör 1 i {location}");
+                    GetAverageTempForSelectedDate(data);
                     break;
                 case "2":
                     Console.WriteLine($"Kör 2 i {location}");
@@ -81,5 +85,41 @@ class Program
                     
             }
         }
+    }
+
+    private static void GetAverageTempForSelectedDate(List<WeatherDataProperties> data)
+    {
+        // Välj Datum mellan 2016-05-31 till 2017-01-10
+        Console.Clear();
+        Console.Write("Ange ett datum: [åååå-mm-dd] \n");
+        string input = Console.ReadLine();
+        if (DateTime.TryParse(input, out DateTime searchedDate))
+        {
+            var selectedDateBySearch = data.Where(x =>
+                x.DateAndTime.Date == searchedDate.Date).ToList();
+
+            if (selectedDateBySearch.Any())
+            {
+                double averageTemperature = selectedDateBySearch.Average(x => x.Temperature);
+                double averageHumidity = selectedDateBySearch.Average(x => x.Humidity);
+
+                Console.WriteLine($"Statistik enligt input: {searchedDate:yyyy-MM-dd}");
+                Console.WriteLine($"Medeltemperatur: {averageTemperature:F1} C°");
+                Console.WriteLine($"Medelfuktighet: {averageHumidity:F1}%");
+                    
+            }
+            else
+            {
+                Console.WriteLine("Det finns ingen data på valt datum! ");
+            }
+
+        }
+        else
+        {
+            Console.WriteLine("Du skrev felaktigt format. Prova 'åååå-mm-dd' ! ");
+        }
+
+        Console.WriteLine("Tryck på valfri tangent för att fortsätta... ");
+        Console.ReadKey();
     }
 }

@@ -43,6 +43,7 @@ public class LoadWeatherData
                             Temperature = double.Parse(match.Groups["temperature"].Value, CultureInfo.InvariantCulture),
                             Location = match.Groups["location"].Value,
                             Humidity = int.Parse(match.Groups["humidity"].Value)
+                             
                         });
                     }
                 }
