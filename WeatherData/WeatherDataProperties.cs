@@ -8,7 +8,17 @@ public class WeatherDataProperties
     public string Location { get; set; }
     public int Humidity { get; set; }
     
-    //TODO: Kalkylera Mögel enligt grafen?
-    
-    //public double MoldCapacity { get; set; }
+    public double MoldRisk
+    {
+        get
+        {
+            if (Temperature <= 0 || Temperature >= 50 || Humidity <= 78)
+            {
+                return 0;
+            }
+            double risk = (Humidity - 78) / (100 - 78) * 100;
+
+            return (int)Math.Min(risk, 100);
+        }
+    }
 }
