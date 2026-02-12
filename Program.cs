@@ -77,6 +77,7 @@ class Program
                     break;
                 case "6" when location == "Ute":
                     Console.WriteLine($"Kör 6 i {location}");
+                    FindMeteorlogicalWinter(data);
                     break;
                 case "0":
                     isRunningSubMenu = !isRunningSubMenu;
@@ -85,7 +86,6 @@ class Program
             }
         }
     }
-
     
 
     private static void SortByMoldRisk(List<WeatherDataProperties> data)
@@ -144,6 +144,42 @@ class Program
         Console.ReadKey();
 
     }
+    private static void FindMeteorlogicalWinter(List<WeatherDataProperties> data)
+    {
+        var fullResult = data.GroupBy(x => x.DateAndTime).Select(g => new
+        {
+            Date = g.Key,
+            //Reading = g.Min(x => x.DateAndTime),    
+            AverageTemperature = g.Average(x => x.Temperature)
+        }).OrderBy(x => x.Date).ToList();
+
+        int consecutiveDays = 0;
+        DateTime? winterDaytime;
+
+        for (int i = 0; i < fullResult.Count; i++)
+        {
+            // <= 0 = 2016-11-03:
+            // < 0 = 2016-11-03:
+            if (fullResult[i].AverageTemperature < 0)
+            {
+                consecutiveDays++;
+                Console.WriteLine($"{fullResult[i].Date:yyyy-MM-dd}: Dag: {consecutiveDays}, Medeltemperatur: {fullResult[i].AverageTemperature:F1}C°");
+                if (consecutiveDays == 5)
+                {
+                    winterDaytime = fullResult[i - 4].Date;
+                    Console.WriteLine($"Du har nått medeltemperaturen under vintern: {winterDaytime} !");
+                    break;
+                }
+            }
+            else
+            {
+                consecutiveDays = 0;
+            }
+        }
+
+        Console.ReadKey();
+    }
+    
     
     private static void FindMeteorologicalFall(List<WeatherDataProperties> data)
     {
@@ -163,7 +199,9 @@ class Program
             {
                 consecutiveDays++;
                 
-                Console.WriteLine($"{fullResult[i].Date:yyyy-MM-dd HH:mm:ss}: Day {consecutiveDays}, Avg Temp: {fullResult[i].AverageTemperature:F1}°C"); //replace Date with Reading for time instead of midnight
+                //Console.WriteLine($"{fullResult[i].Date:yyyy-MM-dd HH:mm:ss}: Day {consecutiveDays}, Avg Temp: {fullResult[i].AverageTemperature:F1}°C"); //replace Date with Reading for time instead of midnight
+                Console.WriteLine(
+                    $"{fullResult[i].Date:yyyy-MM-dd}: Dag: {consecutiveDays}, Medeltemperatur: {fullResult[i].AverageTemperature:F1}C°");
                 if (consecutiveDays == 5)
                 {
                     autumnStartDate = fullResult[i - 4].Date;
