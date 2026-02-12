@@ -16,7 +16,7 @@ public class WeatherDataProperties
             {
                 return 0;
             }
-            double risk = (Humidity - 78) / (100 - 78) * 100;
+            double risk = (Humidity - 78) / 22d * 100;
 
             return (int)Math.Min(risk, 100);
         }

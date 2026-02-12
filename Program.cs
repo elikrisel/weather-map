@@ -48,7 +48,6 @@ class Program
         }
     }
     
-    //TODO: INCLUDE WEATHERPROPERTIES LIST TO ACCESS TO LINQ?
     private static void HandleSubMenu(string location, List<WeatherDataProperties> weatherList)
     {
         var data = 
@@ -62,22 +61,19 @@ class Program
             switch (input)
             {
                 case "1":
-                    Console.WriteLine($"Kör 1 i {location}");
                     GetAverageTempForSelectedDate(data);
                     break;
                 case "2":
-                    Console.WriteLine($"Kör 2 i {location}");
                     WarmestToColdest(data);
                     break;
                 case "3":
-                    Console.WriteLine($"Kör 3 i {location}");
                     DryestToMoistiest(data);
                     break;
                 case "4":
-                    Console.WriteLine($"Kör 4 i {location}");
+                    SortByMoldRisk(data);
                     break;
                 case "5" when location == "Ute":
-                    Console.WriteLine($"Kör 5 i {location}");
+                    FindMeteorologicalFall(data);
                     break;
                 case "6" when location == "Ute":
                     Console.WriteLine($"Kör 6 i {location}");
@@ -88,6 +84,48 @@ class Program
                     
             }
         }
+    }
+
+    
+
+    private static void SortByMoldRisk(List<WeatherDataProperties> data)
+    {
+         var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+         {
+             DateOnly = g.Key,
+             AverageMoldrisk = g.Average(x => x.MoldRisk),
+             
+        
+         }).OrderBy(x => x.AverageMoldrisk).ToList();
+        
+        
+         Console.WriteLine("Moldrisk from bottom to top and date");
+         foreach (var item in fullResult)
+         {
+             Console.WriteLine($"{item.DateOnly.Month} {item.AverageMoldrisk:F1}");   
+         }
+         Console.ReadKey();
+        
+        #region Förklaring till varför vi får 0 i inomhusmätning
+        // 1. Filtrera fram alla mätningar som gjorts "Inne"
+        //var inneData = data.Where(m => m.Location == "Inne");
+        //
+        //// 2. Kolla om någon av dessa har en luftfuktighet över 78%
+        //bool finnsDetRisk = inneData.Any(m => m.Humidity > 78);
+        //
+        //if (finnsDetRisk)
+        //{
+        //    var maxRisk = inneData.Max(m => m.MoldRisk);
+        //    Console.WriteLine($"Ja, det finns mätningar med mögelrisk! Max risk inne är: {maxRisk}%");
+        //}
+        //else
+        //{
+        //    var maxFuktInne = inneData.Max(m => m.Humidity);
+        //    Console.WriteLine($"Nej, det finns ingen mögelrisk inomhus i denna fil.");
+        //    Console.WriteLine($"Högsta luftfuktighet som uppmättes inne var {maxFuktInne}%, vilket är under gränsen på 78%.");
+        //}
+        #endregion
+        
     }
 
     private static void DryestToMoistiest(List<WeatherDataProperties> data)
@@ -101,12 +139,49 @@ class Program
         Console.WriteLine("Medelfuktighet och Datum");
         foreach (var item in fullResult)
         {
-            Console.WriteLine($"{item.DateOnly} {item.Averagehumity:F0}");
+            Console.WriteLine($"{item.DateOnly:yyyy-MM-dd} {item.Averagehumity:F0}");
         }
         Console.ReadKey();
 
     }
+    
+    private static void FindMeteorologicalFall(List<WeatherDataProperties> data)
+    {
+        Console.Clear();
+        var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+        {
+            Date = g.Key,
+            AverageTemperature = g.Average(x => x.Temperature)
+        }).OrderBy(x => x.Date).ToList();
 
+        int consecutiveDays = 0;
+        DateTime? autumnStartDate;
+        for (int i = 0; i < fullResult.Count; i++)
+        {
+            if (fullResult[i].AverageTemperature < 10.0)
+            {
+                consecutiveDays++;
+                
+                Console.WriteLine($"{fullResult[i].Date}: {consecutiveDays}");
+                if (consecutiveDays == 5)
+                {
+                    autumnStartDate = fullResult[i - 4].Date;
+                    Console.WriteLine($"Vi har hittat dagen. {autumnStartDate} Avslutar räkningen");
+                    break;
+                }
+            }
+            else
+            {
+                consecutiveDays = 0;
+                
+            }
+        }
+
+        Console.ReadKey();
+
+    }
+    
+    
     private static void WarmestToColdest(List<WeatherDataProperties> data)
     {
         var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
@@ -119,7 +194,7 @@ class Program
         Console.WriteLine("Medeltemperaturen och Datum");
         foreach (var item in fullResult) 
         {
-            Console.WriteLine($"{item.DateOnly} {item.AverageTemperature:F1}"); // Hade en {item.Lock} för att kolla så att location stämmer
+            Console.WriteLine($"{item.DateOnly:yyyy-MM-dd} {item.AverageTemperature:F1}"); // Hade en {item.Lock} för att kolla så att location stämmer
         }
 
         Console.ReadKey();
