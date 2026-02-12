@@ -66,6 +66,7 @@ class Program
                     break;
                 case "2":
                     Console.WriteLine($"Kör 2 i {location}");
+                    WarmestToColdest(data);
                     break;
                 case "3":
                     Console.WriteLine($"Kör 3 i {location}");
@@ -84,6 +85,21 @@ class Program
                     break;
                     
             }
+        }
+    }
+
+    private static void WarmestToColdest(List<WeatherDataProperties> data)
+    {
+        var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+        {
+            Date = g.Key,
+            AverageTemperature = g.Average(x => x.Temperature)
+        }).OrderByDescending(x => x.AverageTemperature).ToList();
+
+        Console.WriteLine("Medeltemperaturen och Datum");
+        foreach (var item in fullResult) 
+        {
+            //Console.WriteLine($"{item.Date} {item.Location}");
         }
     }
 
