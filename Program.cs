@@ -151,7 +151,8 @@ class Program
         var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
         {
             Date = g.Key,
-            AverageTemperature = g.Average(x => x.Temperature)
+            AverageTemperature = g.Average(x => x.Temperature),
+            //Reading = g.Min(x => x.DateAndTime), 
         }).OrderBy(x => x.Date).ToList();
 
         int consecutiveDays = 0;
@@ -162,11 +163,11 @@ class Program
             {
                 consecutiveDays++;
                 
-                Console.WriteLine($"{fullResult[i].Date}: {consecutiveDays}");
+                Console.WriteLine($"{fullResult[i].Date:yyyy-MM-dd HH:mm:ss}: Day {consecutiveDays}, Avg Temp: {fullResult[i].AverageTemperature:F1}°C"); //replace Date with Reading for time instead of midnight
                 if (consecutiveDays == 5)
                 {
                     autumnStartDate = fullResult[i - 4].Date;
-                    Console.WriteLine($"Vi har hittat dagen. {autumnStartDate} Avslutar räkningen");
+                    Console.WriteLine($"Vi har hittat dagen. {autumnStartDate:yyyy-MM-dd} Avslutar räkningen");
                     break;
                 }
             }
