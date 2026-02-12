@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace weather_map;
 
@@ -70,6 +71,7 @@ class Program
                     break;
                 case "3":
                     Console.WriteLine($"Kör 3 i {location}");
+                    DryestToMoistiest(data);
                     break;
                 case "4":
                     Console.WriteLine($"Kör 4 i {location}");
@@ -88,19 +90,39 @@ class Program
         }
     }
 
+    private static void DryestToMoistiest(List<WeatherDataProperties> data)
+    {
+        var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+        {
+            DateOnly = g.Key,
+            Averagehumity = g.Average(x => x.Humidity),
+        }).OrderBy(x => x.Averagehumity).ToList();
+
+        Console.WriteLine("Medelfuktighet och Datum");
+        foreach (var item in fullResult)
+        {
+            Console.WriteLine($"{item.DateOnly} {item.Averagehumity:F0}");
+        }
+        Console.ReadKey();
+
+    }
+
     private static void WarmestToColdest(List<WeatherDataProperties> data)
     {
         var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
         {
-            Date = g.Key,
-            AverageTemperature = g.Average(x => x.Temperature)
+            DateOnly = g.Key,
+            AverageTemperature = g.Average(x => x.Temperature), 
+            //Lock = g.FirstOrDefault()?.Location
         }).OrderByDescending(x => x.AverageTemperature).ToList();
 
         Console.WriteLine("Medeltemperaturen och Datum");
         foreach (var item in fullResult) 
         {
-            //Console.WriteLine($"{item.Date} {item.Location}");
+            Console.WriteLine($"{item.DateOnly} {item.AverageTemperature:F1}"); // Hade en {item.Lock} för att kolla så att location stämmer
         }
+
+        Console.ReadKey();
     }
 
     private static void GetAverageTempForSelectedDate(List<WeatherDataProperties> data)
