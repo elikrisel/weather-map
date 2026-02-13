@@ -44,10 +44,10 @@ public class RunMenu
                     GetAverageTempForSelectedDate(data);
                     break;
                 case "2":
-                    WarmestToColdest(weatherList);
+                    WarmestToColdest(weatherList, location);
                     break;
                 case "3":
-                    DryestToMoistiest(data);
+                    DryestToMoistiest(weatherList, location);
                     break;
                 case "4":
                     SortByMoldRisk(data);
@@ -98,38 +98,38 @@ public class RunMenu
         Console.WriteLine("Tryck på valfri tangent för att fortsätta... ");
         Console.ReadKey();
     }
-    private static void WarmestToColdest(List<WeatherDataProperties> data)
+    private static void WarmestToColdest(List<WeatherDataProperties> data, string location)
     {
-         // var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
-         // {
-         //     DateOnly = g.Key,
-         //     AverageTemperature = g.Average(x => x.Temperature),
-         //     //Lock = g.FirstOrDefault()?.Location
-         // }).OrderByDescending(x => x.AverageTemperature).ToList();
+        // var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+        // {
+        //     DateOnly = g.Key,
+        //     AverageTemperature = g.Average(x => x.Temperature),
+        //     //Lock = g.FirstOrDefault()?.Location
+        // }).OrderByDescending(x => x.AverageTemperature).ToList();
 
-        var fullResult = GetStatistics(data, "Inne"); 
-        
-        Console.WriteLine("Medeltemperaturen och Datum");
+        var fullResult = GetStatistics(data, location);
+        Console.WriteLine($"Medeltemperaturen och Datum ({location}):");
         foreach (var item in fullResult)
         {
             Console.WriteLine(
-                $"{item.Date:yyyy-MM-dd} {item.AverageTemperature:F1}"); // Hade en {item.Lock} för att kolla så att location stämmer
+                $"{item.Date:yyyy-MM-dd} {item.AverageTemperature:F1}°C - {item.Location}");
         }
 
         Console.ReadKey();
     }
-    private static void DryestToMoistiest(List<WeatherDataProperties> data)
+    private static void DryestToMoistiest(List<WeatherDataProperties> data, string location)
     {
-        var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
-        {
-            DateOnly = g.Key,
-            Averagehumity = g.Average(x => x.Humidity),
-        }).OrderBy(x => x.Averagehumity).ToList();
+        //var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+        //{
+        //    DateOnly = g.Key,
+        //    Averagehumity = g.Average(x => x.Humidity),
+        //}).OrderBy(x => x.Averagehumity).ToList();
+        var fullResult = GetStatistics(data, location).OrderBy(x => x.AverageHumidity);
 
         Console.WriteLine("Medelfuktighet och Datum");
         foreach (var item in fullResult)
         {
-            Console.WriteLine($"{item.DateOnly:yyyy-MM-dd} {item.Averagehumity:F0}");
+            Console.WriteLine($"{item.Date:yyyy-MM-dd} {item.AverageHumidity:F0}");
         }
 
         Console.ReadKey();
@@ -257,7 +257,7 @@ public class RunMenu
                     AverageHumidity = g.Average(w => w.Humidity),
                     AverageMold = g.Average(x => x.MoldRisk)
                     
-                }).OrderBy(x => x.Date).ToList();
+                }).ToList();
     }
     
     
