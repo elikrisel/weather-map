@@ -1,3 +1,4 @@
+using weather_map.Helpers;
 using weather_map.Models;
 
 namespace weather_map;
@@ -28,10 +29,10 @@ public class RunMenu
             }
         }
     }
-    private static void HandleSubMenu(string location, List<WeatherDataProperties> weatherList)
+    private static void HandleSubMenu(string location, List<WeatherDataProperties> weatherDataList)
     {
          var data =
-             weatherList.Where(x => x.Location == location).ToList();
+             weatherDataList.Where(x => x.Location == location).ToList();
 
         bool isRunningSubMenu = true;
         while (isRunningSubMenu)
@@ -44,20 +45,19 @@ public class RunMenu
                     GetAverageTempForSelectedDate(data);
                     break;
                 case "2":
-                    WarmestToColdest(weatherList, location);
+                    WarmestToColdest(weatherDataList, location);
                     break;
                 case "3":
-                    DryestToMoistiest(weatherList, location);
+                    DryestToMoistiest(weatherDataList, location);
                     break;
                 case "4":
-                    SortByMoldRisk(data);
+                    SortByMoldRisk(weatherDataList,location);
                     break;
                 case "5" when location == "Ute":
-                    FindMeteorologicalFall(data);
+                    CheckForStreakBelowTemperature(data, location,  10);
                     break;
                 case "6" when location == "Ute":
-                    Console.WriteLine($"Kör 6 i {location}");
-                    FindMeteorlogicalWinter(data);
+                    CheckForStreakBelowTemperature(data, location,0);
                     break;
                 case "0":
                     isRunningSubMenu = !isRunningSubMenu;
@@ -100,14 +100,16 @@ public class RunMenu
     }
     private static void WarmestToColdest(List<WeatherDataProperties> data, string location)
     {
+        #region Old solution before Refactoring - REMOVE LATER
         // var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
         // {
         //     DateOnly = g.Key,
         //     AverageTemperature = g.Average(x => x.Temperature),
         //     //Lock = g.FirstOrDefault()?.Location
         // }).OrderByDescending(x => x.AverageTemperature).ToList();
-
-        var fullResult = GetStatistics(data, location);
+        #endregion
+        Console.Clear();
+        var fullResult = Helper.GetStatistics(data, location).OrderByDescending(x => x.AverageTemperature);
         Console.WriteLine($"Medeltemperaturen och Datum ({location}):");
         foreach (var item in fullResult)
         {
@@ -119,12 +121,15 @@ public class RunMenu
     }
     private static void DryestToMoistiest(List<WeatherDataProperties> data, string location)
     {
+        #region Old solution before Refactoring - REMOVE LATER
         //var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
         //{
         //    DateOnly = g.Key,
         //    Averagehumity = g.Average(x => x.Humidity),
         //}).OrderBy(x => x.Averagehumity).ToList();
-        var fullResult = GetStatistics(data, location).OrderBy(x => x.AverageHumidity);
+        #endregion
+        Console.Clear();
+        var fullResult = Helper.GetStatistics(data, location).OrderBy(x => x.AverageHumidity);
 
         Console.WriteLine("Medelfuktighet och Datum");
         foreach (var item in fullResult)
@@ -134,19 +139,22 @@ public class RunMenu
 
         Console.ReadKey();
     }
-    private static void SortByMoldRisk(List<WeatherDataProperties> data)
+    private static void SortByMoldRisk(List<WeatherDataProperties> data,string location)
     {
-        var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
-        {
-            DateOnly = g.Key,
-            AverageMoldrisk = g.Average(x => x.MoldRisk),
-        }).OrderBy(x => x.AverageMoldrisk).ToList();
-
-
+        #region Old solution before Refactoring - REMOVE LATER
+        //var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+        //{
+        //    DateOnly = g.Key,
+        //    AverageMoldrisk = g.Average(x => x.MoldRisk),
+        //}).OrderByDescending(x => x.AverageMoldrisk).ToList();
+        #endregion
+        Console.Clear();
+        var fullResult = Helper.GetStatistics(data,location).OrderByDescending(x => x.AverageMold);
+        
         Console.WriteLine("Moldrisk from bottom to top and date");
         foreach (var item in fullResult)
         {
-            Console.WriteLine($"{item.DateOnly.Month} {item.AverageMoldrisk:F1}");
+            Console.WriteLine($"{item.Date:yyyy-MM-dd} {item.AverageMold:F1}");
         }
 
         Console.ReadKey();
@@ -173,94 +181,83 @@ public class RunMenu
 
         #endregion
     }
-    private static void FindMeteorologicalFall(List<WeatherDataProperties> data)
+    private static void FindMeteorologicalFall(List<WeatherDataProperties> data,string location)
     {
         Console.Clear();
-        var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
-        {
-            Date = g.Key,
-            AverageTemperature = g.Average(x => x.Temperature),
-            //Reading = g.Min(x => x.DateAndTime), 
-        }).OrderBy(x => x.Date).ToList();
-
-        int consecutiveDays = 0;
-        for (int i = 0; i < fullResult.Count; i++)
-        {
-            if (fullResult[i].AverageTemperature < 10.0)
-            {
-                consecutiveDays++;
-
-                //Console.WriteLine($"{fullResult[i].Date:yyyy-MM-dd HH:mm:ss}: Day {consecutiveDays}, Avg Temp: {fullResult[i].AverageTemperature:F1}°C"); //replace Date with Reading for time instead of midnight
-                Console.WriteLine(
-                    $"{fullResult[i].Date:yyyy-MM-dd}: Dag: {consecutiveDays}, Medeltemperatur: {fullResult[i].AverageTemperature:F1}C°");
-                if (consecutiveDays == 5)
-                {
-                    DateTime? autumnStartDate = fullResult[i - 4].Date;
-                    Console.WriteLine($"Vi har hittat dagen. {autumnStartDate:yyyy-MM-dd} Avslutar räkningen");
-                    break;
-                }
-            }
-            else
-            {
-                consecutiveDays = 0;
-            }
-        }
-
+        #region Old solution before Refactoring - REMOVE LATER
+        //var fullResult = data.GroupBy(x => x.DateAndTime.Date).Select(g => new
+        //{
+        //    Date = g.Key,
+        //    AverageTemperature = g.Average(x => x.Temperature),
+        //    //Reading = g.Min(x => x.DateAndTime), 
+        //}).OrderBy(x => x.Date).ToList();
+        //int consecutiveDays = 0;
+        // for (int i = 0; i < fullResult.Count; i++)
+        //  {
+        //      if (fullResult[i].AverageTemperature < 10.0)
+        //      {
+        //          consecutiveDays++;
+        //
+        //          //Console.WriteLine($"{fullResult[i].Date:yyyy-MM-dd HH:mm:ss}: Day {consecutiveDays}, Avg Temp: {fullResult[i].AverageTemperature:F1}°C"); //replace Date with Reading for time instead of midnight
+        //          Console.WriteLine(
+        //              $"{fullResult[i].Date:yyyy-MM-dd}: Dag: {consecutiveDays}, Medeltemperatur: {fullResult[i].AverageTemperature:F1}C°");
+        //          if (consecutiveDays == 5)
+        //          {
+        //              DateTime? autumnStartDate = fullResult[i - 4].Date;
+        //              Console.WriteLine($"Vi har hittat dagen. {autumnStartDate:yyyy-MM-dd} Avslutar räkningen");
+        //              break;
+        //          }
+        //      }
+        //      else
+        //      {
+        //          consecutiveDays = 0;
+        //      }
+        // }
+        #endregion
+        
         Console.ReadKey();
     }
-    private static void FindMeteorlogicalWinter(List<WeatherDataProperties> data)
+    private static void CheckForStreakBelowTemperature(List<WeatherDataProperties> data,string location,double temperature)
     {
-        var fullResult = data.GroupBy(x => x.DateAndTime).Select(g => new
-        {
-            Date = g.Key,
-            //Reading = g.Min(x => x.DateAndTime),    
-            AverageTemperature = g.Average(x => x.Temperature)
-        }).OrderBy(x => x.Date).ToList();
+        
+         var fullResult = Helper.GetStatistics(data, location).OrderBy(x => x.Date);
+         int consecutiveDays = 0;
+         DateTime? streakStartDate = null;
+         foreach (var streak in fullResult)
+         {
+             if (streak.AverageTemperature <= temperature)
+             {
+                 if (consecutiveDays == 0)
+                 {
+                     streakStartDate = streak.Date;
+                 }
+                 consecutiveDays++;
+                 Console.WriteLine(
+                     $"{streak.Date:yyyy-MM-dd}: Dag: {consecutiveDays}, Medeltemperatur: {streak.AverageTemperature:F1}C°");
+                 if (consecutiveDays == 5)
+                 {
+                     DateTime resultDate = streak.Date.AddDays(-4);
+                     Console.WriteLine($"Vi har hittat dagen. {streakStartDate:yyyy-MM-dd} Avslutar räkningen. Streaken började vid {resultDate:yyyy-MM-dd}");
+                     break;
+                 }
+                  
+             }
+             else
+             {
+                 consecutiveDays = 0;
+                 streakStartDate = null;
+             }
+             
+             
+         }
+         if (consecutiveDays < 5)
+         {
+             Console.WriteLine($"Ingen 5-dagarsperiod under {temperature}°C kunde hittas");
+         }
+         
+         Console.ReadKey();
 
-        int consecutiveDays = 0;
-
-        for (int i = 0; i < fullResult.Count; i++)
-        {
-            // <= 0 = 2016-11-03:
-            // < 0 = 2016-11-03:
-            if (fullResult[i].AverageTemperature < 0)
-            {
-                consecutiveDays++;
-                Console.WriteLine(
-                    $"{fullResult[i].Date:yyyy-MM-dd}: Dag: {consecutiveDays}, Medeltemperatur: {fullResult[i].AverageTemperature:F1}C°");
-                if (consecutiveDays == 5)
-                {
-                    DateTime? winterDaytime = fullResult[i - 4].Date;
-                    Console.WriteLine($"Du har nått medeltemperaturen under vintern: {winterDaytime} !");
-                    break;
-                }
-            }
-            else
-            {
-                consecutiveDays = 0;
-            }
-        }
-
-        Console.ReadKey();
     }
-    
-    
-    public static List<Statistics> GetStatistics(List<WeatherDataProperties> data, string location)
-    {
-        return
-            data.Where(w => w.Location == location).GroupBy(x => x.DateAndTime.Date)
-                .Select(g => new Statistics
-                {
-                    Date = g.Key,
-                    Location = location,
-                    AverageTemperature = g.Average(w => w.Temperature),
-                    AverageHumidity = g.Average(w => w.Humidity),
-                    AverageMold = g.Average(x => x.MoldRisk)
-                    
-                }).ToList();
-    }
-    
-    
     
 }
 
