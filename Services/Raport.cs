@@ -53,13 +53,13 @@ namespace weather_map
                 sw.WriteLine("UTOMHUS PER MÅNAD:");
                 foreach (var m in monthlyOutdoor)
                 {
-                    sw.WriteLine($"{m.Year}-{m.Month} | Temp:{m.AvgTemp}°C | Fukt:{m.AvgHumidity}% | Mögel:{m.AvgMold}");
+                    sw.WriteLine($"{m.Year}-{m.Month} | Temp:{m.AvgTemp:F1}°C | Fukt:{m.AvgHumidity:F1}% | Mögel:{m.AvgMold:F1}");
                 }
 
                 sw.WriteLine("\nINOMHUS PER MÅNAD:");
                 foreach (var m in monthlyIndoor)
                 {
-                    sw.WriteLine($"{m.Year}-{m.Month} | Temp:{m.AvgTemp}°C | Fukt:{m.AvgHumidity}% | Mögel:{m.AvgMold}");
+                    sw.WriteLine($"{m.Year}-{m.Month} | Temp:{m.AvgTemp:F1}°C | Fukt:{m.AvgHumidity:F1}% | Mögel:{m.AvgMold:F1}");
                 }
 
                 sw.WriteLine("\n====== HÖST & VINTER 2016 ======");
