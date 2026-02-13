@@ -8,6 +8,7 @@ namespace weather_map
 {
     internal class Raport
     {
+        
         private static string filePath = "../../../Files/report.txt";
 
         public static void GenerateReport(List<WeatherDataProperties> data)

@@ -9,23 +9,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        #region Commented Section for testing
-
-        // while (true)
-        // {
-        //      ReadAndWriteFiles.ReadAllFiles("test.txt");
-        //      Console.Write("Lägg till i listan: \t");
-        //      string text = Console.ReadLine();
-        //      await ReadAndWriteFiles.WriteAllFiles("list.txt", text);
-        //      string text = "2016-05-31 13:58:30,Inne,24.8,42";
-        //      RegexTest.TemperatureTest(text);      
-        //      
-        //      
-        // }
-
-        #endregion
-
-        Console.WriteLine("Läser in data:");
+        
         List<WeatherDataProperties> weatherDataList = LoadWeatherData.WeatherData("test.txt");
         bool isRunning = true;
         while (isRunning)
@@ -41,11 +25,11 @@ class Program
                     HandleSubMenu("Ute", weatherDataList);
                     break;
                 case "3":
+                    Raport.GenerateReport(weatherDataList);
+                    break;
+                    case "4":
                     isRunning = !isRunning;
                     break;
-                    //case "4":
-                    //Raport.GenerateReport(weatherDataList);
-                    //break;
                 
             }
         }
