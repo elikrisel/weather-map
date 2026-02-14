@@ -18,9 +18,9 @@ public class Helper
                     
             }).ToList();
 
-    public static void PressToContinue()
+    public static void PressToContinue(string prompt)
     {
-        Console.WriteLine("Tryck på valfri tangent för att fortsätta... ");
+        Console.WriteLine(prompt);
         Console.ReadKey();
     }
     

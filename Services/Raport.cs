@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
+using weather_map.Helpers;
+using weather_map.Models;
+using Enum = weather_map.Enums.Enum;
 
 namespace weather_map
 {
@@ -13,116 +18,127 @@ namespace weather_map
 
         public static void GenerateReport(List<WeatherDataProperties> data)
         {
-            var outdoor = data.Where(x => x.Location == "Ute").ToList();
-            var indoor = data.Where(x => x.Location == "Inne").ToList();
+            var outdoor = Helper.GetStatistics(data, "Ute");
+            var indoor = Helper.GetStatistics(data, "Inne");
 
-            var monthlyOutdoor = outdoor
-                .GroupBy(x => new { x.DateAndTime.Year, x.DateAndTime.Month })
-                .Select(g => new
-                {
-                    g.Key.Year,
-                    g.Key.Month,
-                    AvgTemp = g.Average(x => x.Temperature),
-                    AvgHumidity = g.Average(x => x.Humidity),
-                    AvgMold = g.Average(x => x.MoldRisk)
-                })
-                .OrderBy(x => x.Year).ThenBy(x => x.Month)
-                .ToList();
 
-            var monthlyIndoor = indoor
-                .GroupBy(x => new { x.DateAndTime.Year, x.DateAndTime.Month })
-                .Select(g => new
-                {
-                    g.Key.Year,
-                    g.Key.Month,
-                    AvgTemp = g.Average(x => x.Temperature),
-                    AvgHumidity = g.Average(x => x.Humidity),
-                    AvgMold = g.Average(x => x.MoldRisk)
-                })
-                .OrderBy(x => x.Year).ThenBy(x => x.Month)
-                .ToList();
 
-            DateTime? fallDate = GetFall(outdoor);
-            DateTime? winterDate = GetWinter(outdoor);
-
+            DateTime? fallDate = GetSeason(outdoor, Enum.Season.Fall);
+            DateTime? winterDate = GetSeason(outdoor, Enum.Season.Winter);
 
             using (StreamWriter sw = new StreamWriter(filePath))
             {
                 sw.WriteLine("====== VÄDERRAPPORT ======\n");
-
-                sw.WriteLine("UTOMHUS PER MÅNAD:");
-                foreach (var m in monthlyOutdoor)
-                {
-                    sw.WriteLine($"{m.Year}-{m.Month} | Temp:{m.AvgTemp:F1}°C | Fukt:{m.AvgHumidity:F1}% | Mögel:{m.AvgMold:F1}");
-                }
-
-                sw.WriteLine("\nINOMHUS PER MÅNAD:");
-                foreach (var m in monthlyIndoor)
-                {
-                    sw.WriteLine($"{m.Year}-{m.Month} | Temp:{m.AvgTemp:F1}°C | Fukt:{m.AvgHumidity:F1}% | Mögel:{m.AvgMold:F1}");
-                }
-
-                sw.WriteLine("\n====== HÖST & VINTER 2016 ======");
+                
+                WriteMonthlyReport(sw,"UTOMHUS",outdoor);
+                WriteMonthlyReport(sw,"INOMHUS",indoor);
+                
+                sw.WriteLine("====== HÖST & VINTER 2016 ======");
                 sw.WriteLine($"Meteorologisk höst: {(fallDate.HasValue ? fallDate.Value.ToString("yyyy-MM-dd") : "Ej inträffat")}");
                 sw.WriteLine($"Meteorologisk vinter: {(winterDate.HasValue ? winterDate.Value.ToString("yyyy-MM-dd") : "Ej inträffat")}");
-
+                
                 sw.WriteLine("\n====== MÖGELALGORITM ======");
                 sw.WriteLine("Mögelrisk = 0.5 * f(fukt) + 0.5 * f(temp)");
+                
             }
+            
+            Helper.PressToContinue("Rapport skapad! \nTryck på valfri tangent för att fortsätta...");
 
-            Console.WriteLine("Rapport skapad!");
-            Console.ReadKey();
         }
 
-        private static DateTime? GetFall(List<WeatherDataProperties> data)
+        private static void WriteMonthlyReport(StreamWriter sw, string label, List<Statistics> data)
         {
-            var dailyAvg = data
-                .GroupBy(x => x.DateAndTime.Date)
-                .Select(g => new { Date = g.Key, AvgTemp = g.Average(x => x.Temperature) })
-                .OrderBy(x => x.Date)
-                .ToList();
-
-            int consecutive = 0;
-            for (int i = 0; i < dailyAvg.Count; i++)
+            var monthlyReport = data
+                .GroupBy(d => new { d.Date.Year, d.Date.Month })
+                .Select(g => new
+                {
+                    g.Key.Year,
+                    g.Key.Month,
+                    Temp = g.Average(x => x.AverageTemperature),
+                    Hum = g.Average(x => x.AverageHumidity),
+                    Mold = g.Average(x => x.AverageMold)
+                }).OrderBy(x => x.Year).ThenBy(x => x.Month);
+            
+            sw.WriteLine($"{label} PER MÅNAD: ");
+            foreach (var m in monthlyReport)
             {
-                if (dailyAvg[i].AvgTemp < 10.0 && dailyAvg[i].Date >= new DateTime(2016, 8, 1))
-                    consecutive++;
-                else
-                    consecutive = 0;
-
-                if (consecutive == 5)
-                    return dailyAvg[i - 4].Date;
+                sw.WriteLine($"{m.Year}-{m.Month} | Temp:{m.Temp:F1}°C | Fukt:{m.Hum:F1}% | Mögel:{m.Mold:F1}");
             }
-
-            //om höst inte inträffar, returnera närmast
-            var closest = dailyAvg.Where(d => d.Date >= new DateTime(2016, 8, 1))
-                                  .OrderBy(d => Math.Abs(d.AvgTemp - 10))
-                                  .FirstOrDefault();
-            return closest?.Date;
+            sw.WriteLine();
         }
-        private static DateTime? GetWinter(List<WeatherDataProperties> data)
+        
+        private static DateTime? GetSeason(List<Statistics> data, Enum.Season season)
         {
-            var dailyAvg = data
-                .GroupBy(x => x.DateAndTime.Date)
-                .Select(g => new { Date = g.Key, AvgTemp = g.Average(x => x.Temperature) })
-                .OrderBy(x => x.Date)
-                .ToList();
-
-            int consecutive = 0;
-            for (int i = 0; i < dailyAvg.Count; i++)
+            double threshold = (season == Enum.Season.Fall) ? 10.0 : 0.0;
+            int consecutiveDays = 0;
+            foreach (var d in data)
             {
-                if (dailyAvg[i].AvgTemp <= 0)
-                    consecutive++;
+                bool isCold = (season == Enum.Season.Winter)
+                    ? d.AverageTemperature <= threshold
+                    : d.AverageTemperature < threshold;
+                if(isCold)
+                    consecutiveDays++;
                 else
-                    consecutive = 0;
+                    consecutiveDays = 0;
 
-                if (consecutive == 5)
-                    return dailyAvg[i - 4].Date;
+                if (consecutiveDays == 5)
+                    return data[data.IndexOf(d) - 4].Date;
             }
 
-            //om vinter inte inträffar, returnera närmast
-            var closest = dailyAvg.OrderBy(d => Math.Abs(d.AvgTemp)).FirstOrDefault();
-            return closest?.Date;
+            return null;
         }
+        
+        #region GetFall and GetWinter before refactoring
+        // private static DateTime? GetFall(List<WeatherDataProperties> data)
+        // {
+        //     var dailyAvg = data
+        //         .GroupBy(x => x.DateAndTime.Date)
+        //         .Select(g => new { Date = g.Key, AvgTemp = g.Average(x => x.Temperature) })
+        //         .OrderBy(x => x.Date)
+        //         .ToList();
+        //
+        //     int consecutive = 0;
+        //     for (int i = 0; i < dailyAvg.Count; i++)
+        //     {
+        //         if (dailyAvg[i].AvgTemp < 10.0 && dailyAvg[i].Date >= new DateTime(2016, 8, 1))
+        //             consecutive++;
+        //         else
+        //             consecutive = 0;
+        //
+        //         if (consecutive == 5)
+        //             return dailyAvg[i - 4].Date;
+        //     }
+        //
+        //     //om höst inte inträffar, returnera närmast
+        //     var closest = dailyAvg.Where(d => d.Date >= new DateTime(2016, 8, 1))
+        //                           .OrderBy(d => Math.Abs(d.AvgTemp - 10))
+        //                           .FirstOrDefault();
+        //     return closest?.Date;
+        // }
+        // private static DateTime? GetWinter(List<WeatherDataProperties> data)
+        // {
+        //     var dailyAvg = data
+        //         .GroupBy(x => x.DateAndTime.Date)
+        //         .Select(g => new { Date = g.Key, AvgTemp = g.Average(x => x.Temperature) })
+        //         .OrderBy(x => x.Date)
+        //         .ToList();
+        //
+        //     int consecutive = 0;
+        //     for (int i = 0; i < dailyAvg.Count; i++)
+        //     {
+        //         if (dailyAvg[i].AvgTemp <= 0)
+        //             consecutive++;
+        //         else
+        //             consecutive = 0;
+        //
+        //         if (consecutive == 5)
+        //             return dailyAvg[i - 4].Date;
+        //     }
+        //
+        //     //om vinter inte inträffar, returnera närmast
+        //     var closest = dailyAvg.OrderBy(d => Math.Abs(d.AvgTemp)).FirstOrDefault();
+        //     return closest?.Date;
+        // }
+        #endregion
     }
 }

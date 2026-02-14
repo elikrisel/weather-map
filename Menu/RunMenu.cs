@@ -90,7 +90,7 @@ public class RunMenu
             Console.WriteLine("Du skrev felaktigt format. Prova 'åååå-mm-dd' ! ");
         }
 
-        Helper.PressToContinue();
+        Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
     }
     private static void WarmestToColdest(List<WeatherDataProperties> data, string location)
     {
@@ -104,7 +104,7 @@ public class RunMenu
                 $"{item.Date:yyyy-MM-dd} {item.AverageTemperature:F1}°C - {item.Location}");
         }
 
-        Helper.PressToContinue();
+        Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
     }
     private static void DryestToMoistiest(List<WeatherDataProperties> data, string location)
     {
@@ -117,7 +117,7 @@ public class RunMenu
             Console.WriteLine($"{item.Date:yyyy-MM-dd} {item.AverageHumidity:F0}");
         }
 
-        Helper.PressToContinue();
+        Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
     }
     private static void SortByMoldRisk(List<WeatherDataProperties> data,string location)
     {
@@ -130,29 +130,8 @@ public class RunMenu
             Console.WriteLine($"{item.Date:yyyy-MM-dd} {item.AverageMold:F1}");
         }
 
-        Helper.PressToContinue();
-
-        #region Förklaring till varför vi får 0 i inomhusmätning
-
-        // 1. Filtrera fram alla mätningar som gjorts "Inne"
-        //var inneData = data.Where(m => m.Location == "Inne");
-        //
-        //// 2. Kolla om någon av dessa har en luftfuktighet över 78%
-        //bool finnsDetRisk = inneData.Any(m => m.Humidity > 78);
-        //
-        //if (finnsDetRisk)
-        //{
-        //    var maxRisk = inneData.Max(m => m.MoldRisk);
-        //    Console.WriteLine($"Ja, det finns mätningar med mögelrisk! Max risk inne är: {maxRisk}%");
-        //}
-        //else
-        //{
-        //    var maxFuktInne = inneData.Max(m => m.Humidity);
-        //    Console.WriteLine($"Nej, det finns ingen mögelrisk inomhus i denna fil.");
-        //    Console.WriteLine($"Högsta luftfuktighet som uppmättes inne var {maxFuktInne}%, vilket är under gränsen på 78%.");
-        //}
-
-        #endregion
+        Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
+        
     }
     private static void CheckForStreakBelowTemperature(List<WeatherDataProperties> data,string location,double temperature)
     {
@@ -192,7 +171,7 @@ public class RunMenu
              Console.WriteLine($"Ingen 5-dagarsperiod under {temperature}°C kunde hittas");
          }
          
-         Helper.PressToContinue();
+         Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
 
     }
     
