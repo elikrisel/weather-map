@@ -90,8 +90,7 @@ public class RunMenu
             Console.WriteLine("Du skrev felaktigt format. Prova 'åååå-mm-dd' ! ");
         }
 
-        Console.WriteLine("Tryck på valfri tangent för att fortsätta... ");
-        Console.ReadKey();
+        Helper.PressToContinue();
     }
     private static void WarmestToColdest(List<WeatherDataProperties> data, string location)
     {
@@ -105,7 +104,7 @@ public class RunMenu
                 $"{item.Date:yyyy-MM-dd} {item.AverageTemperature:F1}°C - {item.Location}");
         }
 
-        Console.ReadKey();
+        Helper.PressToContinue();
     }
     private static void DryestToMoistiest(List<WeatherDataProperties> data, string location)
     {
@@ -118,7 +117,7 @@ public class RunMenu
             Console.WriteLine($"{item.Date:yyyy-MM-dd} {item.AverageHumidity:F0}");
         }
 
-        Console.ReadKey();
+        Helper.PressToContinue();
     }
     private static void SortByMoldRisk(List<WeatherDataProperties> data,string location)
     {
@@ -131,7 +130,7 @@ public class RunMenu
             Console.WriteLine($"{item.Date:yyyy-MM-dd} {item.AverageMold:F1}");
         }
 
-        Console.ReadKey();
+        Helper.PressToContinue();
 
         #region Förklaring till varför vi får 0 i inomhusmätning
 
@@ -193,7 +192,7 @@ public class RunMenu
              Console.WriteLine($"Ingen 5-dagarsperiod under {temperature}°C kunde hittas");
          }
          
-         Console.ReadKey();
+         Helper.PressToContinue();
 
     }
     

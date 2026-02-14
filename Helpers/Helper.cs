@@ -17,6 +17,11 @@ public class Helper
                 AverageMold = g.Average(x => x.MoldRisk)
                     
             }).ToList();
-    
+
+    public static void PressToContinue()
+    {
+        Console.WriteLine("Tryck på valfri tangent för att fortsätta... ");
+        Console.ReadKey();
+    }
     
 }
