@@ -1,6 +1,4 @@
-using System.Runtime.InteropServices.ComTypes;
 using weather_map.Helpers;
-using weather_map.Models;
 
 namespace weather_map;
 
@@ -26,6 +24,9 @@ public class RunMenu
                     break;
                 case "4":
                     isRunning = !isRunning;
+                    break;
+                default:
+                    Helper.ShowInvalidInputMessage(2000);
                     break;
             }
         }
@@ -60,10 +61,12 @@ public class RunMenu
                 case "0":
                     isRunningSubMenu = !isRunningSubMenu;
                     break;
+                default:
+                    Helper.ShowInvalidInputMessage(2000);
+                    break;
             }
         }
     }
-    
     
 }
 
