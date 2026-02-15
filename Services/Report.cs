@@ -13,9 +13,7 @@ namespace weather_map
         {
             var outdoor = Helper.GetStatistics(data, "Ute");
             var indoor = Helper.GetStatistics(data, "Inne");
-
-
-
+            
             DateTime? fallDate = GetSeason(outdoor, Enum.Season.Fall);
             DateTime? winterDate = GetSeason(outdoor, Enum.Season.Winter);
 
@@ -31,7 +29,7 @@ namespace weather_map
                 sw.WriteLine($"Meteorologisk vinter: {(winterDate.HasValue ? winterDate.Value.ToString("yyyy-MM-dd") : "Ej inträffat")}");
                 
                 sw.WriteLine("\n====== MÖGELALGORITM ======");
-                sw.WriteLine("Mögelrisk = (fuktighet − 78) / 22 · 100");
+                sw.WriteLine("Mögelrisk = (fuktighet − 78) / 22 * 100");
                 
             }
             

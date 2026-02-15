@@ -33,6 +33,7 @@ public class SubMenu
 
         Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
     }
+    
     public static void WarmestToColdest(List<WeatherDataProperties> data, string location)
     {
         Console.Clear();
@@ -47,6 +48,7 @@ public class SubMenu
 
         Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
     }
+    
     public static void DryestToMoistiest(List<WeatherDataProperties> data, string location)
     {
         Console.Clear();
@@ -60,6 +62,7 @@ public class SubMenu
 
         Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
     }
+    
     public static void SortByMoldRisk(List<WeatherDataProperties> data,string location)
     {
         Console.Clear();
@@ -74,6 +77,7 @@ public class SubMenu
         Helper.PressToContinue("Tryck på valfri tangent för att fortsätta...");
         
     }
+    
     public static void CheckForStreakBelowTemperature(List<WeatherDataProperties> data,string location,double temperature)
     {
          Console.Clear();

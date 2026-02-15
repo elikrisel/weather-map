@@ -24,7 +24,6 @@ public class Helper
         Console.ReadKey();
     }
     
-    
     public static void ShowInvalidInputMessage(int cooldown)
     {
         Console.WriteLine("Ogiltigt val. Välj mellan alternativen som syns i menyn!");

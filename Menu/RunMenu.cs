@@ -31,6 +31,7 @@ public class RunMenu
             }
         }
     }
+    
     private static void HandleSubMenu(string location, List<WeatherDataProperties> data)
     {
         bool isRunningSubMenu = true;
