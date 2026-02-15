@@ -23,4 +23,4 @@ Meteorologisk höst: 2016-10-04
 Meteorologisk vinter: Ej inträffat
 
 ====== MÖGELALGORITM ======
-Mögelrisk = 0.5 * f(fukt) + 0.5 * f(temp)
+Mögelrisk = (fuktighet − 78) / 22 · 100

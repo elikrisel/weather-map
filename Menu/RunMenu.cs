@@ -20,7 +20,7 @@ public class RunMenu
                     HandleSubMenu("Ute", weatherDataList);
                     break;
                 case "3":
-                    Raport.GenerateReport(weatherDataList);
+                    Report.GenerateReport(weatherDataList);
                     break;
                 case "4":
                     isRunning = !isRunning;

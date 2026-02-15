@@ -4,7 +4,7 @@ using Enum = weather_map.Enums.Enum;
 
 namespace weather_map
 {
-    internal class Raport
+    internal class Report
     {
         
         private static string filePath = "../../../Files/report.txt";
@@ -31,7 +31,7 @@ namespace weather_map
                 sw.WriteLine($"Meteorologisk vinter: {(winterDate.HasValue ? winterDate.Value.ToString("yyyy-MM-dd") : "Ej inträffat")}");
                 
                 sw.WriteLine("\n====== MÖGELALGORITM ======");
-                sw.WriteLine("Mögelrisk = 0.5 * f(fukt) + 0.5 * f(temp)");
+                sw.WriteLine("Mögelrisk = (fuktighet − 78) / 22 · 100");
                 
             }
             
