@@ -23,4 +23,6 @@ Meteorologisk höst: 2016-10-04
 Meteorologisk vinter: Ej inträffat
 
 ====== MÖGELALGORITM ======
-Mögelrisk = (fuktighet − 78) / 22 · 100
+Uträkning: Linjär risk mellan 78% och 100% relativ luftfuktighet
+Kravet: Temperatur 0 till 50 grader och luftfuktighet är mer än 78%
+Formel för mögelrisk = (fuktighet − 78) / 22 * 100

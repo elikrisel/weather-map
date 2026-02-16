@@ -29,7 +29,9 @@ namespace weather_map
                 sw.WriteLine($"Meteorologisk vinter: {(winterDate.HasValue ? winterDate.Value.ToString("yyyy-MM-dd") : "Ej inträffat")}");
                 
                 sw.WriteLine("\n====== MÖGELALGORITM ======");
-                sw.WriteLine("Mögelrisk = (fuktighet − 78) / 22 * 100");
+                sw.WriteLine("Uträkning: Linjär risk mellan 78% och 100% relativ luftfuktighet");
+                sw.WriteLine("Kravet: Temperatur 0 till 50 grader och luftfuktighet är mer än 78%");
+                sw.WriteLine("Formel för mögelrisk = (fuktighet − 78) / 22 * 100");
                 
             }
             
