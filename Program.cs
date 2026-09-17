@@ -6,7 +6,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        //Test
+        //Test a new line in comment
         List<WeatherDataProperties> weatherDataList = LoadWeatherData.WeatherData("test.txt");
         RunMenu.RunApplication(weatherDataList);
         
