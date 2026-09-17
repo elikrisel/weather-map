@@ -1,0 +1,25 @@
+name: Demo
+on:
+  env:
+    GREETING: Hello
+    PLACE: Workflow
+  jobs:
+    say-hello:
+      runs-on: ubuntu-latest
+      env:
+        PLACE: job
+        matrix:
+          name: [Kristofer, qwerty]
+        steps:
+          - name: print varibles
+            run: |
+              echo "${{ env.greeting }} ${{ matrix.name }}!"
+              echo "PLACE is: ${{ env.PLACE }}"
+              echo "Started by ${{ github.actor }}"
+          - name: Step-level variable
+            env:
+              PLACE: step
+            run: |
+              echo "PLACE is now: ${{ env.PLACE }}"
+              echo "Same thijng with bash $PLACE"
+
